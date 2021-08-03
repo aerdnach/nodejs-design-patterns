@@ -1,18 +1,14 @@
-import { createServer } from 'http'
-import { cpus } from 'os'
-import cluster from 'cluster'
+const http = require('http');
 
-if (cluster.isMaster) { // ①
-  const availableCpus = cpus()
-  console.log(`Clustering to ${availableCpus.length} processes`)
-  availableCpus.forEach(() => cluster.fork())
-} else { // ②
-  const { pid } = process
-  const server = createServer((req, res) => {
-    let i = 1e7; while (i > 0) { i-- }
-    console.log(`Handling request from ${pid}`)
-    res.end(`Hello from ${pid}\n`)
-  })
+const hostname = '127.0.0.1';
+const port = 3000;
 
-  server.listen(8080, () => console.log(`Started at ${pid}`))
-}
+const server = http.createServer((req, res) => {
+  res.statusCode = 200;
+  res.setHeader('Content-Type', 'text/plain');
+  res.end('Hello World\n');
+});
+
+server.listen(port, hostname, () => {
+  console.log(`Server running at http://${hostname}:${port}/`);
+});
